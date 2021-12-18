@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.manage.mapper.CinemaHallMapper">
+    
+    <resultMap type="CinemaHall" id="CinemaHallResult">
+        <result property="id"    column="id"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="hallNumber"    column="hall_number"    />
+        <result property="name"    column="name"    />
+        <result property="openHours"    column="open_hours"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectCinemaHallVo">
+        select id, cinema_id, cinema_name, hall_number, name, open_hours, is_deleted from cinema_hall
+    </sql>
+
+    <select id="selectCinemaHallList" parameterType="CinemaHall" resultMap="CinemaHallResult">
+        <include refid="selectCinemaHallVo"/>
+        <where>  
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCinemaHallById" parameterType="Long" resultMap="CinemaHallResult">
+        <include refid="selectCinemaHallVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByCinemaId" parameterType="String" resultMap="CinemaHallResult">
+        <include refid="selectCinemaHallVo"/>
+        where cinema_id = #{cinemaId}
+    </select>
+
+    <insert id="insertCinemaHall" parameterType="CinemaHall" useGeneratedKeys="true" keyProperty="id">
+        insert into cinema_hall
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="hallNumber != null and hallNumber != ''">hall_number,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="openHours != null and openHours != ''">open_hours,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="hallNumber != null and hallNumber != ''">#{hallNumber},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="openHours != null and openHours != ''">#{openHours},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCinemaHall" parameterType="CinemaHall">
+        update cinema_hall
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="hallNumber != null and hallNumber != ''">hall_number = #{hallNumber},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="openHours != null and openHours != ''">open_hours = #{openHours},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCinemaHallById" parameterType="Long">
+        delete from cinema_hall where id = #{id}
+    </delete>
+
+    <delete id="deleteCinemaHallByIds" parameterType="String">
+        delete from cinema_hall where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

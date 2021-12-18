@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.session.mapper.SessionMaintainMapper">
+    
+    <resultMap type="SessionMaintain" id="SessionMaintainResult">
+        <result property="id"    column="id"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="hallId"    column="hall_id"    />
+        <result property="hallName"    column="hall_name"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="movieType"    column="movie_type"    />
+        <result property="hallWrong"    column="hall_wrong"    />
+        <result property="maintenance"    column="maintenance"    />
+        <result property="disableSeat"    column="disable_seat"    />
+    </resultMap>
+
+    <sql id="selectSessionMaintainVo">
+        select id, cinema_id, cinema_name, hall_id, hall_name, session_id, movie_type, hall_wrong, maintenance, disable_seat from session_maintain
+    </sql>
+
+    <select id="selectSessionMaintainList" parameterType="SessionMaintain" resultMap="SessionMaintainResult">
+        <include refid="selectSessionMaintainVo"/>
+        <where>  
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="hallName != null  and hallName != ''"> and hall_name like concat('%', #{hallName}, '%')</if>
+            <if test="sessionId != null  and sessionId != ''"> and session_id = #{sessionId}</if>
+            <if test="movieType != null  and movieType != ''"> and movie_type = #{movieType}</if>
+        </where>
+    </select>
+    
+    <select id="selectSessionMaintainById" parameterType="Long" resultMap="SessionMaintainResult">
+        <include refid="selectSessionMaintainVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSessionMaintain" parameterType="SessionMaintain" useGeneratedKeys="true" keyProperty="id">
+        insert into session_maintain
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="hallId != null and hallId != ''">hall_id,</if>
+            <if test="hallName != null and hallName != ''">hall_name,</if>
+            <if test="sessionId != null and sessionId != ''">session_id,</if>
+            <if test="movieType != null and movieType != ''">movie_type,</if>
+            <if test="hallWrong != null and hallWrong != ''">hall_wrong,</if>
+            <if test="maintenance != null and maintenance != ''">maintenance,</if>
+            <if test="disableSeat != null and disableSeat != ''">disable_seat,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">#{hallId},</if>
+            <if test="hallName != null and hallName != ''">#{hallName},</if>
+            <if test="sessionId != null and sessionId != ''">#{sessionId},</if>
+            <if test="movieType != null and movieType != ''">#{movieType},</if>
+            <if test="hallWrong != null and hallWrong != ''">#{hallWrong},</if>
+            <if test="maintenance != null and maintenance != ''">#{maintenance},</if>
+            <if test="disableSeat != null and disableSeat != ''">#{disableSeat},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSessionMaintain" parameterType="SessionMaintain">
+        update session_maintain
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">hall_id = #{hallId},</if>
+            <if test="hallName != null and hallName != ''">hall_name = #{hallName},</if>
+            <if test="sessionId != null and sessionId != ''">session_id = #{sessionId},</if>
+            <if test="movieType != null and movieType != ''">movie_type = #{movieType},</if>
+            <if test="hallWrong != null and hallWrong != ''">hall_wrong = #{hallWrong},</if>
+            <if test="maintenance != null and maintenance != ''">maintenance = #{maintenance},</if>
+            <if test="disableSeat != null and disableSeat != ''">disable_seat = #{disableSeat},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSessionMaintainById" parameterType="Long">
+        delete from session_maintain where id = #{id}
+    </delete>
+
+    <delete id="deleteSessionMaintainByIds" parameterType="String">
+        delete from session_maintain where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

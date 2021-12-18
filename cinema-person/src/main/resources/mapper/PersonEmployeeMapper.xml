@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.person.mapper.PersonEmployeeMapper">
+    
+    <resultMap type="PersonEmployee" id="PersonEmployeeResult">
+        <result property="id"    column="id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="salary"    column="salary"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="hiredate"    column="hiredate"    />
+        <result property="status"    column="status"    />
+        <result property="employeeType"    column="employee_type"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectPersonEmployeeVo">
+        select id, employee_id, name, sex, card_id, salary, cinema_id, cinema_name, hiredate, status, employee_type, is_deleted from person_employee
+    </sql>
+
+    <select id="selectPersonEmployeeList" parameterType="PersonEmployee" resultMap="PersonEmployeeResult">
+        <include refid="selectPersonEmployeeVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="employeeType != null "> and employee_type = #{employeeType}</if>
+        </where>
+    </select>
+    
+    <select id="selectPersonEmployeeById" parameterType="Long" resultMap="PersonEmployeeResult">
+        <include refid="selectPersonEmployeeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPersonEmployeeByCinemaId" resultMap="PersonEmployeeResult">
+        <include refid="selectPersonEmployeeVo"/>
+        where cinema_id = #{cinemaId}
+    </select>
+
+    <insert id="insertPersonEmployee" parameterType="PersonEmployee" useGeneratedKeys="true" keyProperty="id">
+        insert into person_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="cardId != null and cardId != ''">card_id,</if>
+            <if test="salary != null">salary,</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="hiredate != null">hiredate,</if>
+            <if test="status != null">status,</if>
+            <if test="employeeType != null">employee_type,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">#{employeeId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="cardId != null and cardId != ''">#{cardId},</if>
+            <if test="salary != null">#{salary},</if>
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="hiredate != null">#{hiredate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="employeeType != null">#{employeeType},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePersonEmployee" parameterType="PersonEmployee">
+        update person_employee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id = #{employeeId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="cardId != null and cardId != ''">card_id = #{cardId},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="hiredate != null">hiredate = #{hiredate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="employeeType != null">employee_type = #{employeeType},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePersonEmployeeById" parameterType="Long">
+        delete from person_employee where id = #{id}
+    </delete>
+
+    <delete id="deletePersonEmployeeByIds" parameterType="String">
+        delete from person_employee where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

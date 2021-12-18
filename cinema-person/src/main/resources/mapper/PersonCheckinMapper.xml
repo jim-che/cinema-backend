@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.person.mapper.PersonCheckinMapper">
+    
+    <resultMap type="PersonCheckin" id="PersonCheckinResult">
+        <result property="id"    column="id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="employeeName"    column="employee_name"    />
+        <result property="attendanceTime"    column="attendance_time"    />
+        <result property="attendanceRate"    column="attendance_rate"    />
+        <result property="daysOff"    column="days_off"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectPersonCheckinVo">
+        select id, employee_id, employee_name, attendance_time, attendance_rate, days_off, is_deleted from person_checkin
+    </sql>
+
+    <select id="selectPersonCheckinList" parameterType="PersonCheckin" resultMap="PersonCheckinResult">
+        <include refid="selectPersonCheckinVo"/>
+        <where>  
+            <if test="employeeName != null  and employeeName != ''"> and employee_name like concat('%', #{employeeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPersonCheckinById" parameterType="Long" resultMap="PersonCheckinResult">
+        <include refid="selectPersonCheckinVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPersonCheckin" parameterType="PersonCheckin" useGeneratedKeys="true" keyProperty="id">
+        insert into person_checkin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id,</if>
+            <if test="employeeName != null and employeeName != ''">employee_name,</if>
+            <if test="attendanceTime != null">attendance_time,</if>
+            <if test="attendanceRate != null">attendance_rate,</if>
+            <if test="daysOff != null">days_off,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">#{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">#{employeeName},</if>
+            <if test="attendanceTime != null">#{attendanceTime},</if>
+            <if test="attendanceRate != null">#{attendanceRate},</if>
+            <if test="daysOff != null">#{daysOff},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePersonCheckin" parameterType="PersonCheckin">
+        update person_checkin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id = #{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">employee_name = #{employeeName},</if>
+            <if test="attendanceTime != null">attendance_time = #{attendanceTime},</if>
+            <if test="attendanceRate != null">attendance_rate = #{attendanceRate},</if>
+            <if test="daysOff != null">days_off = #{daysOff},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePersonCheckinById" parameterType="Long">
+        delete from person_checkin where id = #{id}
+    </delete>
+
+    <delete id="deletePersonCheckinByIds" parameterType="String">
+        delete from person_checkin where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

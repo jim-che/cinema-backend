@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.movie.mapper.MovieBoxOfficeMapper">
+    
+    <resultMap type="MovieBoxOffice" id="MovieBoxOfficeResult">
+        <result property="id"    column="id"    />
+        <result property="movieId"    column="movie_id"    />
+        <result property="movieName"    column="movie_name"    />
+        <result property="releaseDate"    column="release_date"    />
+        <result property="boxOffice"    column="box_office"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectMovieBoxOfficeVo">
+        select id, movie_id, movie_name, release_date, box_office, is_deleted from movie_box_office
+    </sql>
+
+    <select id="selectMovieBoxOfficeList" parameterType="MovieBoxOffice" resultMap="MovieBoxOfficeResult">
+        <include refid="selectMovieBoxOfficeVo"/>
+        <where>  
+            <if test="movieName != null  and movieName != ''"> and movie_name like concat('%', #{movieName}, '%')</if>
+            <if test="releaseDate != null "> and release_date = #{releaseDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectMovieBoxOfficeById" parameterType="Long" resultMap="MovieBoxOfficeResult">
+        <include refid="selectMovieBoxOfficeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMovieBoxOffice" parameterType="MovieBoxOffice">
+        insert into movie_box_office
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="movieId != null and movieId != ''">movie_id,</if>
+            <if test="movieName != null and movieName != ''">movie_name,</if>
+            <if test="releaseDate != null">release_date,</if>
+            <if test="boxOffice != null">box_office,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="movieId != null and movieId != ''">#{movieId},</if>
+            <if test="movieName != null and movieName != ''">#{movieName},</if>
+            <if test="releaseDate != null">#{releaseDate},</if>
+            <if test="boxOffice != null">#{boxOffice},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMovieBoxOffice" parameterType="MovieBoxOffice">
+        update movie_box_office
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="movieId != null and movieId != ''">movie_id = #{movieId},</if>
+            <if test="movieName != null and movieName != ''">movie_name = #{movieName},</if>
+            <if test="releaseDate != null">release_date = #{releaseDate},</if>
+            <if test="boxOffice != null">box_office = #{boxOffice},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMovieBoxOfficeById" parameterType="Long">
+        delete from movie_box_office where id = #{id}
+    </delete>
+
+    <delete id="deleteMovieBoxOfficeByIds" parameterType="String">
+        delete from movie_box_office where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.movie.mapper.MovieTypeMapper">
+    
+    <resultMap type="MovieType" id="MovieTypeResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectMovieTypeVo">
+        select id, type from movie_type
+    </sql>
+
+    <select id="selectMovieTypeList" parameterType="MovieType" resultMap="MovieTypeResult">
+        <include refid="selectMovieTypeVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectMovieTypeById" parameterType="Long" resultMap="MovieTypeResult">
+        <include refid="selectMovieTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMovieType" parameterType="MovieType">
+        insert into movie_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null and type != ''">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null and type != ''">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMovieType" parameterType="MovieType">
+        update movie_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMovieTypeById" parameterType="Long">
+        delete from movie_type where id = #{id}
+    </delete>
+
+    <delete id="deleteMovieTypeByIds" parameterType="String">
+        delete from movie_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.session.mapper.SessionManageMapper">
+    
+    <resultMap type="SessionManage" id="SessionManageResult">
+        <result property="id"    column="id"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="hallId"    column="hall_id"    />
+        <result property="hallName"    column="hall_name"    />
+        <result property="movieId"    column="movie_id"    />
+        <result property="movieType"    column="movie_type"    />
+        <result property="language"    column="language"    />
+        <result property="sessionTime"    column="session_time"    />
+        <result property="length"    column="length"    />
+        <result property="price"    column="price"    />
+        <result property="soldSeat"    column="sold_seat"    />
+        <result property="surplusSeat"    column="surplus_seat"    />
+        <result property="tip"    column="tip"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectSessionManageVo">
+        select id, session_id, cinema_id, cinema_name, hall_id, hall_name, movie_id, movie_type, language, session_time, length, price, sold_seat, surplus_seat, tip, is_deleted from session_manage
+    </sql>
+
+    <select id="selectSessionManageList" parameterType="SessionManage" resultMap="SessionManageResult">
+        <include refid="selectSessionManageVo"/>
+        <where>  
+            <if test="sessionId != null  and sessionId != ''"> and session_id = #{sessionId}</if>
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="hallName != null  and hallName != ''"> and hall_name like concat('%', #{hallName}, '%')</if>
+            <if test="movieId != null  and movieId != ''"> and movie_id = #{movieId}</if>
+            <if test="movieType != null  and movieType != ''"> and movie_type = #{movieType}</if>
+            <if test="language != null  and language != ''"> and language = #{language}</if>
+        </where>
+    </select>
+    
+    <select id="selectSessionManageById" parameterType="Long" resultMap="SessionManageResult">
+        <include refid="selectSessionManageVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSessionManageListByCinemaId" resultMap="SessionManageResult">
+        <include refid="selectSessionManageVo"/>
+        where cinema_id = #{cinemaId}
+    </select>
+
+    <insert id="insertSessionManage" parameterType="SessionManage" useGeneratedKeys="true" keyProperty="id">
+        insert into session_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">session_id,</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="hallId != null and hallId != ''">hall_id,</if>
+            <if test="hallName != null and hallName != ''">hall_name,</if>
+            <if test="movieId != null and movieId != ''">movie_id,</if>
+            <if test="movieType != null and movieType != ''">movie_type,</if>
+            <if test="language != null and language != ''">language,</if>
+            <if test="sessionTime != null">session_time,</if>
+            <if test="length != null and length != ''">length,</if>
+            <if test="price != null">price,</if>
+            <if test="soldSeat != null">sold_seat,</if>
+            <if test="surplusSeat != null">surplus_seat,</if>
+            <if test="tip != null">tip,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">#{sessionId},</if>
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">#{hallId},</if>
+            <if test="hallName != null and hallName != ''">#{hallName},</if>
+            <if test="movieId != null and movieId != ''">#{movieId},</if>
+            <if test="movieType != null and movieType != ''">#{movieType},</if>
+            <if test="language != null and language != ''">#{language},</if>
+            <if test="sessionTime != null">#{sessionTime},</if>
+            <if test="length != null and length != ''">#{length},</if>
+            <if test="price != null">#{price},</if>
+            <if test="soldSeat != null">#{soldSeat},</if>
+            <if test="surplusSeat != null">#{surplusSeat},</if>
+            <if test="tip != null">#{tip},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSessionManage" parameterType="SessionManage">
+        update session_manage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">session_id = #{sessionId},</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">hall_id = #{hallId},</if>
+            <if test="hallName != null and hallName != ''">hall_name = #{hallName},</if>
+            <if test="movieId != null and movieId != ''">movie_id = #{movieId},</if>
+            <if test="movieType != null and movieType != ''">movie_type = #{movieType},</if>
+            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="sessionTime != null">session_time = #{sessionTime},</if>
+            <if test="length != null and length != ''">length = #{length},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="soldSeat != null">sold_seat = #{soldSeat},</if>
+            <if test="surplusSeat != null">surplus_seat = #{surplusSeat},</if>
+            <if test="tip != null">tip = #{tip},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSessionManageById" parameterType="Long">
+        delete from session_manage where id = #{id}
+    </delete>
+
+    <delete id="deleteSessionManageByIds" parameterType="String">
+        delete from session_manage where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

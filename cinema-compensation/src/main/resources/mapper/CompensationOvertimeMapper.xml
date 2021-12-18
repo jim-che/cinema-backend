@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.compensation.mapper.CompensationOvertimeMapper">
+    
+    <resultMap type="CompensationOvertime" id="CompensationOvertimeResult">
+        <result property="id"    column="id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="employeeName"    column="employee_name"    />
+        <result property="overtimeDate"    column="overtime_date"    />
+        <result property="overtimeLength"    column="overtime_length"    />
+        <result property="overtimeWage"    column="overtime_wage"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectCompensationOvertimeVo">
+        select id, employee_id, employee_name, overtime_date, overtime_length, overtime_wage, is_deleted from compensation_overtime
+    </sql>
+
+    <select id="selectCompensationOvertimeList" parameterType="CompensationOvertime" resultMap="CompensationOvertimeResult">
+        <include refid="selectCompensationOvertimeVo"/>
+        <where>  
+            <if test="employeeName != null  and employeeName != ''"> and employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="overtimeDate != null "> and overtime_date = #{overtimeDate}</if>
+            <if test="overtimeLength != null "> and overtime_length = #{overtimeLength}</if>
+        </where>
+    </select>
+    
+    <select id="selectCompensationOvertimeById" parameterType="Long" resultMap="CompensationOvertimeResult">
+        <include refid="selectCompensationOvertimeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCompensationOvertime" parameterType="CompensationOvertime" useGeneratedKeys="true" keyProperty="id">
+        insert into compensation_overtime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id,</if>
+            <if test="employeeName != null and employeeName != ''">employee_name,</if>
+            <if test="overtimeDate != null">overtime_date,</if>
+            <if test="overtimeLength != null">overtime_length,</if>
+            <if test="overtimeWage != null">overtime_wage,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">#{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">#{employeeName},</if>
+            <if test="overtimeDate != null">#{overtimeDate},</if>
+            <if test="overtimeLength != null">#{overtimeLength},</if>
+            <if test="overtimeWage != null">#{overtimeWage},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCompensationOvertime" parameterType="CompensationOvertime">
+        update compensation_overtime
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id = #{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">employee_name = #{employeeName},</if>
+            <if test="overtimeDate != null">overtime_date = #{overtimeDate},</if>
+            <if test="overtimeLength != null">overtime_length = #{overtimeLength},</if>
+            <if test="overtimeWage != null">overtime_wage = #{overtimeWage},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCompensationOvertimeById" parameterType="Long">
+        delete from compensation_overtime where id = #{id}
+    </delete>
+
+    <delete id="deleteCompensationOvertimeByIds" parameterType="String">
+        delete from compensation_overtime where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.ticket.mapper.TicketCommentMapper">
+    
+    <resultMap type="TicketComment" id="TicketCommentResult">
+        <result property="id"    column="id"    />
+        <result property="movieId"    column="movie_id"    />
+        <result property="movieName"    column="movie_name"    />
+        <result property="comment"    column="comment"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectTicketCommentVo">
+        select id, movie_id, movie_name, comment, is_deleted from ticket_comment
+    </sql>
+
+    <select id="selectTicketCommentList" parameterType="TicketComment" resultMap="TicketCommentResult">
+        <include refid="selectTicketCommentVo"/>
+        <where>  
+            <if test="movieId != null  and movieId != ''"> and movie_id = #{movieId}</if>
+            <if test="movieName != null  and movieName != ''"> and movie_name like concat('%', #{movieName}, '%')</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+        </where>
+    </select>
+    
+    <select id="selectTicketCommentById" parameterType="Long" resultMap="TicketCommentResult">
+        <include refid="selectTicketCommentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTicketComment" parameterType="TicketComment" useGeneratedKeys="true" keyProperty="id">
+        insert into ticket_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieId != null and movieId != ''">movie_id,</if>
+            <if test="movieName != null and movieName != ''">movie_name,</if>
+            <if test="comment != null and comment != ''">comment,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieId != null and movieId != ''">#{movieId},</if>
+            <if test="movieName != null and movieName != ''">#{movieName},</if>
+            <if test="comment != null and comment != ''">#{comment},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTicketComment" parameterType="TicketComment">
+        update ticket_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="movieId != null and movieId != ''">movie_id = #{movieId},</if>
+            <if test="movieName != null and movieName != ''">movie_name = #{movieName},</if>
+            <if test="comment != null and comment != ''">comment = #{comment},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTicketCommentById" parameterType="Long">
+        delete from ticket_comment where id = #{id}
+    </delete>
+
+    <delete id="deleteTicketCommentByIds" parameterType="String">
+        delete from ticket_comment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

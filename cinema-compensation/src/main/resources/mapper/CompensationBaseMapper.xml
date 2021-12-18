@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.compensation.mapper.CompensationBaseMapper">
+    
+    <resultMap type="CompensationBase" id="CompensationBaseResult">
+        <result property="id"    column="id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="employeeName"    column="employee_name"    />
+        <result property="issueTime"    column="issue_time"    />
+        <result property="employeeType"    column="employee_type"    />
+        <result property="salary"    column="salary"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectCompensationBaseVo">
+        select id, employee_id, employee_name, issue_time, employee_type, salary, is_deleted from compensation_base
+    </sql>
+
+    <select id="selectCompensationBaseList" parameterType="CompensationBase" resultMap="CompensationBaseResult">
+        <include refid="selectCompensationBaseVo"/>
+        <where>  
+            <if test="employeeName != null  and employeeName != ''"> and employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="employeeType != null  and employeeType != ''"> and employee_type = #{employeeType}</if>
+        </where>
+    </select>
+    
+    <select id="selectCompensationBaseById" parameterType="Long" resultMap="CompensationBaseResult">
+        <include refid="selectCompensationBaseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCompensationBase" parameterType="CompensationBase" useGeneratedKeys="true" keyProperty="id">
+        insert into compensation_base
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id,</if>
+            <if test="employeeName != null and employeeName != ''">employee_name,</if>
+            <if test="issueTime != null">issue_time,</if>
+            <if test="employeeType != null and employeeType != ''">employee_type,</if>
+            <if test="salary != null">salary,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">#{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">#{employeeName},</if>
+            <if test="issueTime != null">#{issueTime},</if>
+            <if test="employeeType != null and employeeType != ''">#{employeeType},</if>
+            <if test="salary != null">#{salary},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCompensationBase" parameterType="CompensationBase">
+        update compensation_base
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id = #{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">employee_name = #{employeeName},</if>
+            <if test="issueTime != null">issue_time = #{issueTime},</if>
+            <if test="employeeType != null and employeeType != ''">employee_type = #{employeeType},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCompensationBaseById" parameterType="Long">
+        delete from compensation_base where id = #{id}
+    </delete>
+
+    <delete id="deleteCompensationBaseByIds" parameterType="String">
+        delete from compensation_base where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

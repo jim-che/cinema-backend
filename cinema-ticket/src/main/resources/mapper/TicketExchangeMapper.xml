@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.ticket.mapper.TicketExchangeMapper">
+    
+    <resultMap type="TicketExchange" id="TicketExchangeResult">
+        <result property="id"    column="id"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="movieId"    column="movie_id"    />
+        <result property="movieName"    column="movie_name"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="hallId"    column="hall_id"    />
+        <result property="seatId"    column="seat_id"    />
+        <result property="distance"    column="distance"    />
+        <result property="isApprove"    column="is_approve"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectTicketExchangeVo">
+        select id, cinema_id, cinema_name, movie_id, movie_name, session_id, hall_id, seat_id, distance, is_approve, status from ticket_exchange
+    </sql>
+
+    <select id="selectTicketExchangeList" parameterType="TicketExchange" resultMap="TicketExchangeResult">
+        <include refid="selectTicketExchangeVo"/>
+        <where>  
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="movieName != null  and movieName != ''"> and movie_name like concat('%', #{movieName}, '%')</if>
+            <if test="seatId != null  and seatId != ''"> and seat_id = #{seatId}</if>
+            <if test="distance != null "> and distance = #{distance}</if>
+            <if test="isApprove != null "> and is_approve = #{isApprove}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectTicketExchangeById" parameterType="Long" resultMap="TicketExchangeResult">
+        <include refid="selectTicketExchangeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTicketExchange" parameterType="TicketExchange" useGeneratedKeys="true" keyProperty="id">
+        insert into ticket_exchange
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="movieId != null and movieId != ''">movie_id,</if>
+            <if test="movieName != null and movieName != ''">movie_name,</if>
+            <if test="sessionId != null and sessionId != ''">session_id,</if>
+            <if test="hallId != null and hallId != ''">hall_id,</if>
+            <if test="seatId != null and seatId != ''">seat_id,</if>
+            <if test="distance != null">distance,</if>
+            <if test="isApprove != null">is_approve,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="movieId != null and movieId != ''">#{movieId},</if>
+            <if test="movieName != null and movieName != ''">#{movieName},</if>
+            <if test="sessionId != null and sessionId != ''">#{sessionId},</if>
+            <if test="hallId != null and hallId != ''">#{hallId},</if>
+            <if test="seatId != null and seatId != ''">#{seatId},</if>
+            <if test="distance != null">#{distance},</if>
+            <if test="isApprove != null">#{isApprove},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTicketExchange" parameterType="TicketExchange">
+        update ticket_exchange
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="movieId != null and movieId != ''">movie_id = #{movieId},</if>
+            <if test="movieName != null and movieName != ''">movie_name = #{movieName},</if>
+            <if test="sessionId != null and sessionId != ''">session_id = #{sessionId},</if>
+            <if test="hallId != null and hallId != ''">hall_id = #{hallId},</if>
+            <if test="seatId != null and seatId != ''">seat_id = #{seatId},</if>
+            <if test="distance != null">distance = #{distance},</if>
+            <if test="isApprove != null">is_approve = #{isApprove},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTicketExchangeById" parameterType="Long">
+        delete from ticket_exchange where id = #{id}
+    </delete>
+
+    <delete id="deleteTicketExchangeByIds" parameterType="String">
+        delete from ticket_exchange where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

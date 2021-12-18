@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.compensation.mapper.CompensationBonusMapper">
+    
+    <resultMap type="CompensationBonus" id="CompensationBonusResult">
+        <result property="id"    column="id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="employeeName"    column="employee_name"    />
+        <result property="checkDays"    column="check_days"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="bonus"    column="bonus"    />
+    </resultMap>
+
+    <sql id="selectCompensationBonusVo">
+        select id, employee_id, employee_name, check_days, is_deleted, bonus from compensation_bonus
+    </sql>
+
+    <select id="selectCompensationBonusList" parameterType="CompensationBonus" resultMap="CompensationBonusResult">
+        <include refid="selectCompensationBonusVo"/>
+        <where>  
+            <if test="employeeId != null  and employeeId != ''"> and employee_id = #{employeeId}</if>
+            <if test="employeeName != null  and employeeName != ''"> and employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="bonus != null "> and bonus = #{bonus}</if>
+        </where>
+    </select>
+    
+    <select id="selectCompensationBonusById" parameterType="Long" resultMap="CompensationBonusResult">
+        <include refid="selectCompensationBonusVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCompensationBonus" parameterType="CompensationBonus" useGeneratedKeys="true" keyProperty="id">
+        insert into compensation_bonus
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id,</if>
+            <if test="employeeName != null and employeeName != ''">employee_name,</if>
+            <if test="checkDays != null">check_days,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="bonus != null">bonus,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">#{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">#{employeeName},</if>
+            <if test="checkDays != null">#{checkDays},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="bonus != null">#{bonus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCompensationBonus" parameterType="CompensationBonus">
+        update compensation_bonus
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null and employeeId != ''">employee_id = #{employeeId},</if>
+            <if test="employeeName != null and employeeName != ''">employee_name = #{employeeName},</if>
+            <if test="checkDays != null">check_days = #{checkDays},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="bonus != null">bonus = #{bonus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCompensationBonusById" parameterType="Long">
+        delete from compensation_bonus where id = #{id}
+    </delete>
+
+    <delete id="deleteCompensationBonusByIds" parameterType="String">
+        delete from compensation_bonus where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

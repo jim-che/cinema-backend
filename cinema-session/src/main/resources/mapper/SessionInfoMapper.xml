@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.session.mapper.SessionInfoMapper">
+    
+    <resultMap type="SessionInfo" id="SessionInfoResult">
+        <result property="id"    column="id"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="cinemaId"    column="cinema_id"    />
+        <result property="cinemaName"    column="cinema_name"    />
+        <result property="hallId"    column="hall_id"    />
+        <result property="hallName"    column="hall_name"    />
+        <result property="rowNumber"    column="row_number"    />
+        <result property="rowSeats"    column="row_seats"    />
+        <result property="totalSeats"    column="total_seats"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectSessionInfoVo">
+        select id, session_id, cinema_id, cinema_name, hall_id, hall_name, row_number, row_seats, total_seats, is_deleted from session_info
+    </sql>
+
+    <select id="selectSessionInfoList" parameterType="SessionInfo" resultMap="SessionInfoResult">
+        <include refid="selectSessionInfoVo"/>
+        <where>  
+            <if test="sessionId != null  and sessionId != ''"> and session_id = #{sessionId}</if>
+            <if test="cinemaId != null  and cinemaId != ''"> and cinema_id = #{cinemaId}</if>
+            <if test="cinemaName != null  and cinemaName != ''"> and cinema_name like concat('%', #{cinemaName}, '%')</if>
+            <if test="hallId != null  and hallId != ''"> and hall_id = #{hallId}</if>
+            <if test="hallName != null  and hallName != ''"> and hall_name like concat('%', #{hallName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSessionInfoById" parameterType="Long" resultMap="SessionInfoResult">
+        <include refid="selectSessionInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSessionInfo" parameterType="SessionInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into session_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">session_id,</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id,</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name,</if>
+            <if test="hallId != null and hallId != ''">hall_id,</if>
+            <if test="hallName != null and hallName != ''">hall_name,</if>
+            <if test="rowNumber != null">row_number,</if>
+            <if test="rowSeats != null">row_seats,</if>
+            <if test="totalSeats != null">total_seats,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">#{sessionId},</if>
+            <if test="cinemaId != null and cinemaId != ''">#{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">#{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">#{hallId},</if>
+            <if test="hallName != null and hallName != ''">#{hallName},</if>
+            <if test="rowNumber != null">#{rowNumber},</if>
+            <if test="rowSeats != null">#{rowSeats},</if>
+            <if test="totalSeats != null">#{totalSeats},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSessionInfo" parameterType="SessionInfo">
+        update session_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sessionId != null and sessionId != ''">session_id = #{sessionId},</if>
+            <if test="cinemaId != null and cinemaId != ''">cinema_id = #{cinemaId},</if>
+            <if test="cinemaName != null and cinemaName != ''">cinema_name = #{cinemaName},</if>
+            <if test="hallId != null and hallId != ''">hall_id = #{hallId},</if>
+            <if test="hallName != null and hallName != ''">hall_name = #{hallName},</if>
+            <if test="rowNumber != null">row_number = #{rowNumber},</if>
+            <if test="rowSeats != null">row_seats = #{rowSeats},</if>
+            <if test="totalSeats != null">total_seats = #{totalSeats},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSessionInfoById" parameterType="Long">
+        delete from session_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSessionInfoByIds" parameterType="String">
+        delete from session_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
