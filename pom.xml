@@ -206,8 +206,6 @@
         <module>cinema-admin</module>
         <module>cinema-framework</module>
         <module>cinema-system</module>
-        <module>cinema-quartz</module>
-        <module>cinema-generator</module>
         <module>cinema-common</module>
         <module>cinema-manage</module>
         <module>cinema-compensation</module>

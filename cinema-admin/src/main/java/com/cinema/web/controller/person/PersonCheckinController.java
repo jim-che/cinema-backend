@@ -1,6 +1,7 @@
 package com.cinema.web.controller.person;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +53,17 @@ public class PersonCheckinController extends BaseController
         startPage();
         List<PersonCheckin> list = personCheckinService.selectPersonCheckinList(personCheckin);
         return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('person:checkin:list')")
+    @GetMapping("/list2")
+    public AjaxResult getEmployeeIds(){
+        List<String> employeeList = new ArrayList<>();
+        List<PersonEmployee> personEmployees = personEmployeeMapper.selectPersonEmployeeList(null);
+        personEmployees.forEach(personEmployee -> {
+            employeeList.add(personEmployee.getEmployeeId());
+        });
+        return AjaxResult.success(employeeList);
     }
 
     /**
@@ -120,6 +132,11 @@ public class PersonCheckinController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+        List<PersonEmployee> employees = personEmployeeMapper.selectPersonEmployeeByIds(ids);
+        System.out.println("_+++++++++++");
+        System.out.println(employees);
+        System.out.println("_+++++++++++");
+
         return toAjax(personCheckinService.deletePersonCheckinByIds(ids));
     }
 }

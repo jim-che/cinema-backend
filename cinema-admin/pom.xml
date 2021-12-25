@@ -60,20 +60,6 @@
             <version>3.8.0</version>
         </dependency>
 
-        <!-- 定时任务-->
-        <dependency>
-            <groupId>com.cinema</groupId>
-            <artifactId>cinema-quartz</artifactId>
-            <version>3.8.0</version>
-        </dependency>
-
-        <!-- 代码生成-->
-        <dependency>
-            <groupId>com.cinema</groupId>
-            <artifactId>cinema-generator</artifactId>
-            <version>3.8.0</version>
-        </dependency>
-
         <dependency>
             <groupId>com.cinema</groupId>
             <artifactId>cinema_manage</artifactId>

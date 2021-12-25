@@ -44,6 +44,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where cinema_id = #{cinemaId}
     </select>
 
+    <select id="selectPersonEmployeeByIds" parameterType="Long" resultMap="PersonEmployeeResult">
+        <include refid="selectPersonEmployeeVo"/>
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insertPersonEmployee" parameterType="PersonEmployee" useGeneratedKeys="true" keyProperty="id">
         insert into person_employee
         <trim prefix="(" suffix=")" suffixOverrides=",">

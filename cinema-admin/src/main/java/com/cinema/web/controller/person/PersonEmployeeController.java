@@ -4,7 +4,9 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cinema.manage.domain.CinemaEmployee;
 import com.cinema.manage.domain.CinemaInfo;
+import com.cinema.manage.mapper.CinemaEmployeeMapper;
 import com.cinema.manage.mapper.CinemaInfoMapper;
 import com.cinema.person.mapper.PersonEmployeeMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +46,9 @@ public class PersonEmployeeController extends BaseController
 
     @Resource
     private CinemaInfoMapper cinemaInfoMapper;
+
+    @Resource
+    private CinemaEmployeeMapper cinemaEmployeeMapper;
 
     /**
      * 查询员工管理列表
@@ -101,6 +106,13 @@ public class PersonEmployeeController extends BaseController
             throw new RuntimeException("影院编号不正确!");
         }
         personEmployee.setEmployeeId(generateEmployeeId(personEmployee.getCinemaId()));
+        CinemaEmployee cinemaEmployee = new CinemaEmployee();
+        cinemaEmployee.setCinemaId(personEmployee.getCinemaId());
+        cinemaEmployee.setEmployeeId(personEmployee.getEmployeeId());
+        cinemaEmployee.setCinemaName(personEmployee.getCinemaName());
+        cinemaEmployee.setEmployeeType(personEmployee.getEmployeeType());
+        cinemaEmployee.setWorkHours("8:00");
+        cinemaEmployeeMapper.insertCinemaEmployee(cinemaEmployee);
         return toAjax(personEmployeeService.insertPersonEmployee(personEmployee));
     }
 
@@ -112,8 +124,11 @@ public class PersonEmployeeController extends BaseController
         }
 
         int num = Integer.parseInt(personEmployees.get(personEmployees.size() - 1).getEmployeeId().substring(8, 11)) + 1;
+        System.out.println("=============");
+        System.out.println(cinemaId + "YG" + String.format("%04d", num));
+        System.out.println("=============");
 
-        return cinemaId + "YG" + String.format("0%4d", num);
+        return cinemaId + "YG" + String.format("%04d", num);
     }
 
     /**
@@ -135,6 +150,15 @@ public class PersonEmployeeController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+        List<PersonEmployee> employees = personEmployeeMapper.selectPersonEmployeeByIds(ids);
+        List<CinemaEmployee> cinemaEmployees = cinemaEmployeeMapper.selectCinemaEmployeeList(null);
+        for (CinemaEmployee cinemaEmployee : cinemaEmployees) {
+            for (PersonEmployee employee : employees) {
+                if(employee.getEmployeeId().equals(cinemaEmployee.getEmployeeId())){
+                    cinemaEmployeeMapper.deleteCinemaEmployeeById(cinemaEmployee.getId());
+                }
+            }
+        }
         return toAjax(personEmployeeService.deletePersonEmployeeByIds(ids));
     }
 }

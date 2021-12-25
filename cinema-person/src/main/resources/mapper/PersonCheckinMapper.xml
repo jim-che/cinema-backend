@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPersonCheckinVo"/>
         <where>  
             <if test="employeeName != null  and employeeName != ''"> and employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="employeeId != null  and employeeId != ''"> and employee_id like concat('%', #{employeeId}, '%')</if>
         </where>
     </select>
     

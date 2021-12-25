@@ -19,6 +19,9 @@ public interface PersonEmployeeMapper
      */
     public PersonEmployee selectPersonEmployeeById(Long id);
 
+    public List<PersonEmployee> selectPersonEmployeeByIds(Long[] ids);
+
+
     /**
      * 查询员工管理列表
      * 

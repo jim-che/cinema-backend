@@ -1,5 +1,6 @@
 package com.cinema.web.controller.session;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +56,17 @@ public class SessionMaintainController extends BaseController
         startPage();
         List<SessionMaintain> list = sessionMaintainService.selectSessionMaintainList(sessionMaintain);
         return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('session:session:list')")
+    @GetMapping("/list2")
+    public AjaxResult getSessionIds(){
+        List<String> result = new ArrayList<>();
+        List<SessionManage> sessionManages = sessionManageMapper.selectSessionManageList(null);
+        sessionManages.forEach(sessionManage -> {
+            result.add(sessionManage.getSessionId());
+        });
+        return AjaxResult.success(result);
     }
 
     /**

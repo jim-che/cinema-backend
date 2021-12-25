@@ -1,5 +1,6 @@
 package com.cinema.web.controller.session;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import com.cinema.manage.mapper.CinemaInfoMapper;
 import com.cinema.movie.domain.MovieInfo;
 import com.cinema.movie.mapper.MovieInfoMapper;
 import com.cinema.session.mapper.SessionManageMapper;
+import com.cinema.web.controller.session.dto.ManageDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,6 +91,33 @@ public class SessionManageController extends BaseController
         return AjaxResult.success(sessionManageService.selectSessionManageById(id));
     }
 
+
+    @PreAuthorize("@ss.hasPermi('session:manage:list')")
+    @GetMapping("/list2")
+    public AjaxResult getInfo2()
+    {
+        ManageDto manageDto = new ManageDto();
+        List<String> cinemaIds = new ArrayList<>();
+        List<String> hallIds = new ArrayList<>();
+        List<String> movieIds = new ArrayList<>();
+        List<MovieInfo> movieInfos = movieInfoMapper.selectMovieInfoList(null);
+        List<CinemaInfo> cinemaInfoList = cinemaInfoMapper.selectCinemaInfoList(null);
+        List<CinemaHall> cinemaHalls = cinemaHallMapper.selectCinemaHallList(null);
+        for (CinemaInfo cinemaInfo : cinemaInfoList) {
+            cinemaIds.add(cinemaInfo.getCinemaId().toString());
+        }
+        for (CinemaHall cinemaHall : cinemaHalls) {
+            hallIds.add(cinemaHall.getHallNumber().toString());
+        }
+        for (MovieInfo movieInfo : movieInfos) {
+            movieIds.add(movieInfo.getMovieId().toString());
+        }
+        manageDto.setHallIds(hallIds);
+        manageDto.setCinemaIds(cinemaIds);
+        manageDto.setMovieIds(movieIds);
+        return AjaxResult.success(manageDto);
+    }
+
     /**
      * 新增场次管理
      */
@@ -145,7 +174,7 @@ public class SessionManageController extends BaseController
         }
 
         int num = Integer.parseInt(sessionManages.get(sessionManages.size()-1).getSessionId().substring(8,12)) + 1;
-        return cinemaId + "CC" + String.format("0%5d", num);
+        return cinemaId + "CC" + String.format("%05d", num);
     }
     /**
      * 修改场次管理

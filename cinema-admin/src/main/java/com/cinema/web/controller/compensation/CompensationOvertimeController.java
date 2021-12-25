@@ -1,5 +1,6 @@
 package com.cinema.web.controller.compensation;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +53,18 @@ public class CompensationOvertimeController extends BaseController
         List<CompensationOvertime> list = compensationOvertimeService.selectCompensationOvertimeList(compensationOvertime);
         return getDataTable(list);
     }
+
+    @PreAuthorize("@ss.hasPermi('compensation:overtime:list')")
+    @GetMapping("/list2")
+    public AjaxResult getPersonIdList(){
+        List<String> personIdList = new ArrayList<>();
+        List<PersonEmployee> personEmployeeList = personEmployeeMapper.selectPersonEmployeeList(new PersonEmployee());
+        for (PersonEmployee personEmployee : personEmployeeList) {
+            personIdList.add(personEmployee.getEmployeeId());
+        }
+        return AjaxResult.success(personIdList);
+    }
+
 
     /**
      * 导出加班薪资管理列表

@@ -4,8 +4,11 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cinema.movie.domain.MovieBoxOffice;
 import com.cinema.movie.domain.MovieInfo;
+import com.cinema.movie.mapper.MovieBoxOfficeMapper;
 import com.cinema.movie.mapper.MovieInfoMapper;
+import com.cinema.movie.service.impl.MovieBoxOfficeServiceImpl;
 import com.cinema.session.domain.SessionManage;
 import com.cinema.session.mapper.SessionManageMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +48,10 @@ public class TicketDrawController extends BaseController
 
     @Resource
     private MovieInfoMapper movieInfoMapper;
+
+    @Resource
+    private MovieBoxOfficeMapper movieBoxOfficeMapper;
+
 
     /**
      * 查询出票管理列表
@@ -90,6 +97,9 @@ public class TicketDrawController extends BaseController
     public AjaxResult add(@RequestBody TicketDraw ticketDraw)
     {
         List<SessionManage> sessionManages = sessionManageMapper.selectSessionManageList(null);
+        System.out.println("++++++++++++++");
+        System.out.println(ticketDraw);
+        System.out.println("++++++++++++++");
         List<MovieInfo> movieInfos = movieInfoMapper.selectMovieInfoList(null);
         boolean flag = false;
         for (SessionManage sessionManage : sessionManages) {
@@ -102,14 +112,31 @@ public class TicketDrawController extends BaseController
             }
         }
         if(!flag){
-            throw new RuntimeException("影院编号不存在!");
+            throw new RuntimeException("场次编号不存在!");
         }
-
+        MovieInfo info = new MovieInfo();
         for (MovieInfo movieInfo : movieInfos) {
             if(movieInfo.getMovieId().equals(ticketDraw.getMovieId())){
                 ticketDraw.setMovieName(movieInfo.getName());
+                info = movieInfo;
                 break;
             }
+        }
+        String movieId = ticketDraw.getMovieId();
+        MovieBoxOffice movieBoxOffice = new MovieBoxOffice();
+        List<MovieBoxOffice> offices = movieBoxOfficeMapper.selectMovieBoxOfficeList(null);
+        for (MovieBoxOffice office : offices) {
+            if(office.getMovieId().equals(movieId)){
+                movieBoxOffice = office;
+                movieBoxOffice.setBoxOffice(movieBoxOffice.getBoxOffice() +0.05);
+                movieBoxOfficeMapper.updateMovieBoxOffice(movieBoxOffice);
+            }
+        }
+        if(movieBoxOffice.equals(new MovieBoxOffice())){
+            movieBoxOffice.setMovieName(info.getName());
+            movieBoxOffice.setBoxOffice(0.05);
+            movieBoxOffice.setReleaseDate(info.getReleaseDate());
+            movieBoxOfficeMapper.insertMovieBoxOffice(movieBoxOffice);
         }
         return toAjax(ticketDrawService.insertTicketDraw(ticketDraw));
     }
